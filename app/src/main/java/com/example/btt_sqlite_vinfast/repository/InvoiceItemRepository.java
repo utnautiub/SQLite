@@ -57,10 +57,6 @@ public class InvoiceItemRepository {
         int quantityIndex = cursor.getColumnIndex("quantity");
         int priceIndex = cursor.getColumnIndex("price");
 
-        if (invoiceItemIdIndex != -1 && invoiceIdIndex != -1 && productIdIndex != -1 || quantityIndex != -1 || priceIndex != -1){
-            throw new IllegalStateException("Database schema has changed. Missing columns.");
-        }
-
         if (cursor.moveToFirst()) {
             do {
                 int invoiceItemId = cursor.getInt(invoiceItemIdIndex);

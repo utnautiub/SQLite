@@ -46,11 +46,16 @@ public class CartRepository {
         List<Cart> carts = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM carts", null);
+
+        int CartIdIndex = cursor.getColumnIndex("cart_id");
+        int UserIdIndex = cursor.getColumnIndex("user_id");
+        int CreatedAtIndex = cursor.getColumnIndex("created_at");
+
         if (cursor.moveToFirst()) {
             do {
-                int id = cursor.getInt(cursor.getColumnIndex("cart_id"));
-                int userId = cursor.getInt(cursor.getColumnIndex("user_id"));
-                String createdAt = cursor.getString(cursor.getColumnIndex("created_at"));
+                int id = cursor.getInt(CartIdIndex);
+                int userId = cursor.getInt(UserIdIndex);
+                String createdAt = cursor.getString(CreatedAtIndex);
                 Cart cart = new Cart(id, userId, createdAt);
                 carts.add(cart);
             } while (cursor.moveToNext());

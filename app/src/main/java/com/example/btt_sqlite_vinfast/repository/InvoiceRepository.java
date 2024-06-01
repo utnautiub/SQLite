@@ -54,10 +54,6 @@ public class InvoiceRepository {
         int totalPriceIndex = cursor.getColumnIndex("total_price");
         int createdAtIndex = cursor.getColumnIndex("created_at");
 
-        if (invoiceIdIndex != -1 && userIdIndex != -1 && totalPriceIndex != -1 && createdAtIndex != -1) {
-            throw new IllegalStateException("Database schema has changed. Missing columns.");
-        }
-
         if (cursor.moveToFirst()) {
             do {
                 int invoiceId = cursor.getInt(invoiceIdIndex);

@@ -1,16 +1,14 @@
 package com.example.btt_sqlite_vinfast.model;
 
 public class Product {
-    private int id;
-    private String code;
+    private int code;
     private String name;
     private String imageUrl;
     private double price;
     private int categoryId;
 
     // Constructor
-    public Product(int id, String code, String name, String imageUrl, double price, int categoryId) {
-        this.id = id;
+    public Product(int code, String name, String imageUrl, double price, int categoryId) {
         this.code = code;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -19,19 +17,11 @@ public class Product {
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

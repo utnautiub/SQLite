@@ -49,10 +49,6 @@ public class CategoryRepository {
         int idIndex = cursor.getColumnIndex("category_id");
         int nameIndex = cursor.getColumnIndex("category_name");
 
-        // Check if indices are valid
-        if (idIndex == -1 && nameIndex == -1) {
-            throw new IllegalStateException("Database schema has changed. Missing columns.");
-        }
 
         if (cursor.moveToFirst()) {
             do {

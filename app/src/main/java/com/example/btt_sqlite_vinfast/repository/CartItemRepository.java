@@ -49,16 +49,10 @@ public class CartItemRepository {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM cart_items", null);
 
-        // Getting column indices safely
         int cartItemIdIndex = cursor.getColumnIndex("cart_item_id");
         int cartIdIndex = cursor.getColumnIndex("cart_id");
         int productIdIndex = cursor.getColumnIndex("product_id");
         int quantityIndex = cursor.getColumnIndex("quantity");
-
-        // Check if indices are valid
-        if (cartItemIdIndex == -1 && cartIdIndex == -1 && productIdIndex == -1 && quantityIndex == -1) {
-            throw new IllegalStateException("Database schema has changed. Missing columns.");
-        }
 
         if (cursor.moveToFirst()) {
             do {
