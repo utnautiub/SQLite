@@ -107,4 +107,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
         }
     }
+
+    public ProductRepository getProductRepository() {
+        return productRepository;
+    }
+
 }

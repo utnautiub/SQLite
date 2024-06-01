@@ -18,6 +18,26 @@ public class CartItemRepository {
         this.dbHelper = new DatabaseHelper(context);
     }
 
+    public double getTotalPriceByUserId(int userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT SUM(cart_items.quantity * products.price) as total " +
+                "FROM cart_items " +
+                "JOIN carts ON cart_items.cart_id = carts.cart_id " +
+                "JOIN products ON cart_items.product_id = products.product_id " +
+                "WHERE carts.user_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+        double total = 0;
+
+        int totalIndex = cursor.getColumnIndex("total");
+
+        if (cursor.moveToFirst()) {
+            total = cursor.getDouble(totalIndex);
+        }
+        cursor.close();
+        db.close();
+        return total;
+    }
+
     public void addOrUpdateCartItem(CartItem cartItem) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("cart_items", null, "cart_id=? AND product_id=?",
