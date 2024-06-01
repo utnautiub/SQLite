@@ -5,6 +5,11 @@ public class Cart {
     private int userId;
     private String createdAt;
 
+
+    // Constructor mặc định không tham số
+    public Cart() {
+    }
+
     // Constructor
     public Cart(int id, int userId, String createdAt) {
         this.id = id;

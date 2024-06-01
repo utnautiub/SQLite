@@ -6,10 +6,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,19 +25,25 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.btt_sqlite_vinfast.adapter.ProductAdapter;
+import com.example.btt_sqlite_vinfast.model.Cart;
+import com.example.btt_sqlite_vinfast.model.CartItem;
 import com.example.btt_sqlite_vinfast.model.Product;
+import com.example.btt_sqlite_vinfast.repository.CartItemRepository;
+import com.example.btt_sqlite_vinfast.repository.CartRepository;
 import com.example.btt_sqlite_vinfast.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * A simple {@link Fragment} subclass.
+ */
 public class HomeFragment extends Fragment {
 
     ImageView imgLogo;
 
-    List<String> categoryList = new ArrayList<>();
-    List<Product> productList = new ArrayList<>();
+    List<String> categoryList = new ArrayList<>(); // Danh sách thể loại sản phẩm
+    List<Product> productList = new ArrayList<>(); // Danh sách sản phẩm
 
     Button btnModalThemSP;
     Button btnModalSuaSP;
@@ -47,14 +53,14 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     ProductAdapter productAdapter;
 
-    private boolean isLogoutConfirmed = false;
-
     public HomeFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -62,10 +68,12 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Initialize AutoCompleteTextView and Adapter
         autoCompleteTextView = view.findViewById(R.id.dropdown_category);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, categoryList);
         autoCompleteTextView.setAdapter(adapter);
 
+        // Set item click listener
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +82,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Initialize and set onClickListeners for buttons
         btnModalThemSP = view.findViewById(R.id.btnModalThemSP);
         btnModalSuaSP = view.findViewById(R.id.btnModalSuaSP);
         btnModalThemLoaiSP = view.findViewById(R.id.btnModalThemLoaiSP);
@@ -84,44 +93,21 @@ public class HomeFragment extends Fragment {
 
         // Initialize ImageView and set onClickListener
         imgLogo = view.findViewById(R.id.imgLogo);
-
         imgLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLogoutConfirmed) {
-                    logout();
-                    Toast.makeText(getActivity(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-                } else {
-                    isLogoutConfirmed = true;
-                    Toast.makeText(getActivity(), "Bấm lần nữa để đăng xuất", Toast.LENGTH_SHORT).show();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            isLogoutConfirmed = false;
-                        }
-                    }, 2000);
-                }
+                confirmLogout();
             }
         });
 
+        // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.rvproduct);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        productAdapter = new ProductAdapter(getActivity(), productList);
+        productAdapter = new ProductAdapter(getActivity(), productList, this::addToCart);
         recyclerView.setAdapter(productAdapter);
 
-        addSampleData();
-
+        // Populate productList with actual data
         populateProductList();
-    }
-
-    private void addSampleData() {
-        ProductRepository productRepository = new ProductRepository(getActivity());
-        productRepository.addProduct(new Product(001, "VinFast Car", "vinfast_logo", 1000000, 1));
-        productRepository.addProduct(new Product(002, "VinFast Bike", "default_url", 500000, 2));
-        productRepository.addProduct(new Product(003, "VinFast Electric Scooter", "default_url", 300000, 3));
-        productRepository.addProduct(new Product(004, "VinFast SUV", "default_url", 1500000, 1));
-        productRepository.addProduct(new Product(005, "VinFast Sedan", "default_url", 1200000, 1));
     }
 
     private void populateProductList() {
@@ -180,6 +166,7 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getActivity(), "Product added successfully", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
 
+            // Refresh the product list
             populateProductList();
         });
     }
@@ -197,10 +184,45 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void confirmLogout() {
+        Toast.makeText(getActivity(), "Bấm lần nữa để đăng xuất", Toast.LENGTH_SHORT).show();
+        imgLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+    }
+
     private void logout() {
+        // Create an intent to start LoginActivity
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        getActivity().finish();
+        getActivity().finish(); // Close the current activity
     }
+
+    private void addToCart(Product product) {
+        CartItemRepository cartItemRepository = new CartItemRepository(getActivity());
+
+        int cartId = getCartIdByUserId();
+
+        if (cartId != -1) { // Assuming -1 means cart not found or error
+            CartItem cartItem = new CartItem(0, cartId, product.getCode(), 1);
+            cartItemRepository.addOrUpdateCartItem(cartItem);
+            Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+        } else {
+            // Handle error if cartId not found or other issues
+            Toast.makeText(getActivity(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private int getCartIdByUserId() {
+        // Create a simple hash function based on userId
+        // For demonstration purposes, you can create a unique cartId based on userId
+        // In a real-world application, you should retrieve this from the database or generate properly
+
+        return 1 ; // Example: multiply userId by 1000
+    }
+
 }

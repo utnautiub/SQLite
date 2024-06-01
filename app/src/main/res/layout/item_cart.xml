@@ -9,7 +9,6 @@
     app:cardMaxElevation="5dp"
 >
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,9 +46,8 @@
                     android:id="@+id/btnAddToCart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/cart"
                     android:layout_weight="1"
-                    android:textColorLink="#000000" />
+                    android:background="@drawable/delete" />
 
             </LinearLayout>
 
@@ -71,6 +69,20 @@
                     android:layout_height="wrap_content"
                     android:text="Xe máy"
                     android:textSize="14dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvLabelTotalProduct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Số lượng"
+                        android:textSize="14dp"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             </LinearLayout>
@@ -97,9 +109,45 @@
                 <ImageView
                     android:id="@+id/imageMoney"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="19dp"
                     tools:srcCompat="@drawable/money" />
 
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/tvminus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" - "
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/tvTotalProduct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="0dp"
+                            android:text="1"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/tvplus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" + "
+                            android:textSize="14dp" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
         </LinearLayout>

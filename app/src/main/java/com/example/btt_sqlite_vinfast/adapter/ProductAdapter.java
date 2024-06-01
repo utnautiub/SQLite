@@ -21,10 +21,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private Context context;
     private List<Product> productList;
+    private OnAddToCartClickListener addToCartClickListener;
 
-    public ProductAdapter(Context context, List<Product> productList) {
+    public interface OnAddToCartClickListener {
+        void onAddToCartClick(Product product);
+    }
+
+    public ProductAdapter(Context context, List<Product> productList, OnAddToCartClickListener addToCartClickListener) {
         this.context = context;
         this.productList = productList;
+        this.addToCartClickListener = addToCartClickListener;
     }
 
     @NonNull
@@ -40,9 +46,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.tvTitleProduct.setText(product.getName());
         holder.tvCategoryProduct.setText(String.valueOf(product.getCategoryId())); // Hiển thị ID thể loại
         holder.tvGiaProduct.setText(String.valueOf(product.getPrice()));
-        holder.imageMoney.setImageResource(R.drawable.money);
 
-        // Hiển thị hình ảnh sản phẩm nếu có (giả sử URL hoặc Drawable)
         if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
             if (product.getImageUrl().startsWith("default_url")) {
                 holder.imageProduct.setImageResource(R.drawable.vinfast_logo); // Hình ảnh mặc định
@@ -58,8 +62,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.imageProduct.setImageResource(R.drawable.vinfast_logo); // Hình ảnh mặc định
         }
 
-
+        holder.btnAddToCart.setOnClickListener(v -> addToCartClickListener.onAddToCartClick(product));
     }
+
 
     @Override
     public int getItemCount() {
@@ -68,7 +73,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitleProduct, tvCategoryProduct, tvGiaProduct;
-        ImageView imageProduct, imageMoney;
+        ImageView imageProduct;
         Button btnAddToCart;
 
         public ProductViewHolder(@NonNull View itemView) {
@@ -77,9 +82,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvCategoryProduct = itemView.findViewById(R.id.tvCategoryProduct);
             tvGiaProduct = itemView.findViewById(R.id.tvGiaProduct);
             imageProduct = itemView.findViewById(R.id.imageProduct);
-            imageMoney = itemView.findViewById(R.id.imageMoney);
             btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
         }
     }
 }
-

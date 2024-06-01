@@ -56,4 +56,32 @@ public class ProductRepository {
         db.close();
         return productList;
     }
+
+    public Product getProductById(int productId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("products", null, "product_id=?", new String[]{String.valueOf(productId)}, null, null, null);
+
+        int codeIndex = cursor.getColumnIndex("product_id");
+        int nameIndex = cursor.getColumnIndex("product_name");
+        int imageUrlIndex = cursor.getColumnIndex("url_image");
+        int priceIndex = cursor.getColumnIndex("price");
+        int categoryIdIndex = cursor.getColumnIndex("category_id");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int code = cursor.getInt(codeIndex);
+            String name = cursor.getString(nameIndex);
+            String imageUrl = cursor.getString(imageUrlIndex);
+            double price = cursor.getDouble(priceIndex);
+            int categoryId = cursor.getInt(categoryIdIndex);
+
+            Product product = new Product(code, name, imageUrl, price, categoryId);
+            cursor.close();
+            db.close();
+            return product;
+        } else {
+            cursor.close();
+            db.close();
+            return null;
+        }
+    }
 }
